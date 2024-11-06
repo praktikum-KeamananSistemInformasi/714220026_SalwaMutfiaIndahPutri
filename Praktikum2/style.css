@@ -1,0 +1,125 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #3b6978, #204051);
+    color: #333;
+    padding: 20px;
+}
+
+.form-container {
+    width: 500px;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    max-height: 90vh;
+    margin-right: 20px; /* Memberikan ruang antara formulir dan tabel hasil */
+}
+
+.form-container h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #3b6978;
+    text-align: center;
+    text-transform: uppercase; /* Menjadikan teks menjadi huruf kapital */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #204051;
+}
+
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 12px; /* Menambah padding untuk ruang yang lebih nyaman */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #3b6978;
+    box-shadow: 0 0 8px rgba(59, 105, 120, 0.3);
+    outline: none;
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #28a745;
+    color: #ffffff;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s; /* Tambahkan efek transform */
+}
+
+button:hover {
+    background-color: #218838;
+    transform: translateY(-2px); /* Efek mengangkat tombol saat hover */
+}
+
+.results-container {
+    width: 600px; /* Lebar tabel hasil */
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    margin-top: 20px; /* Ruang antara formulir dan tabel */
+}
+
+.results-container h3 {
+    text-align: center;
+    color: #3b6978;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px; /* Menambah padding untuk ruang yang lebih nyaman */
+    text-align: left;
+}
+
+th {
+    background-color: #3b6978;
+    color: white;
+    font-size: 18px; /* Ukuran font header yang lebih besar */
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+.risk-description {
+    font-style: italic;
+    color: #b22222; /* Warna merah untuk keterangan risiko */
+    margin-top: 15px; /* Menambahkan ruang di atas keterangan risiko */
+    margin-bottom: 0; /* Menghilangkan ruang di bawah keterangan risiko */
+    text-align: center; /* Menjajarkan teks di tengah */
+}

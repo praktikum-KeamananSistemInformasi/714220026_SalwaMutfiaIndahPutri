@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Isian Risiko Berdasarkan STRIDE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="form-container">
+    <h2>Formulir Risiko Berdasarkan STRIDE</h2>
+    <form id="strideRiskForm" onsubmit="return calculateDREADScore()">
+        <!-- Aset yang Terancam -->
+        <div class="form-group">
+            <label for="asset">Aset yang Terancam:</label>
+            <select id="asset" name="asset" required>
+                <option value="">Pilih aset</option>
+                <option value="Server">Server</option>
+                <option value="Database">Database</option>
+                <option value="Sistem Pelacakan Barang">Sistem Pelacakan Barang</option>
+                <option value="API Eksternal">API Eksternal</option>
+            </select>
+        </div>
+
+        <!-- Deskripsi Ancaman -->
+        <div class="form-group">
+            <label for="threatDescription">Deskripsi Ancaman:</label>
+            <select id="threatDescription" name="threatDescription" required onchange="autoFillThreatType()">
+                <option value="">Pilih deskripsi ancaman</option>
+                <option value="Risiko server perusahaan logistik dimodifikasi secara tidak sah, misalnya untuk mengubah pengaturan pengiriman.">Risiko server dimodifikasi</option>
+                <option value="Server bisa kebanjiran permintaan yang tidak wajar, misalnya saat musim ramai, sehingga membuat sistem tidak bisa diakses.">Kebanjiran permintaan</option>
+                <option value="Risiko data pelanggan atau informasi pengiriman.">Risiko data pelanggan</option>
+                <option value="Ada kemungkinan karyawan atau pihak eksternal mendapatkan akses lebih dari yang seharusnya ke data pengiriman penting.">Akses lebih dari yang seharusnya</option>
+                <option value="Sistem bisa disalahgunakan oleh pihak luar untuk berpura-pura menjadi mitra pengiriman, menyebabkan kesalahan transaksi.">Pura-pura menjadi mitra pengiriman</option>
+            </select>
+        </div>
+
+        <!-- Jenis Ancaman -->
+        <div class="form-group">
+            <label for="threatType">Jenis Ancaman (STRIDE):</label>
+            <select id="threatType" name="threatType" required>
+                <option value="">Pilih jenis ancaman</option>
+                <option value="Tampering">Tampering</option>
+                <option value="Denial of Service">Denial of Service</option>
+                <option value="Information Disclosure">Information Disclosure</option>
+                <option value="Elevation of Privilege">Elevation of Privilege</option>
+                <option value="Spoofing">Spoofing</option>
+            </select>
+        </div>
+
+        <!-- Skor DREAD -->
+        <h3>Skor DREAD</h3>
+        <div class="form-group">
+            <label for="damage">Damage Potential (1-10):</label>
+            <input type="number" id="damage" name="damage" min="1" max="10" required oninput="updateRiskDescription(this)">
+            <div class="risk-description" id="damageDescription"></div>
+        </div>
+        <div class="form-group">
+            <label for="reproducibility">Reproducibility (1-10):</label>
+            <input type="number" id="reproducibility" name="reproducibility" min="1" max="10" required oninput="updateRiskDescription(this)">
+            <div class="risk-description" id="reproducibilityDescription"></div>
+        </div>
+        <div class="form-group">
+            <label for="exploitability">Exploitability (1-10):</label>
+            <input type="number" id="exploitability" name="exploitability" min="1" max="10" required oninput="updateRiskDescription(this)">
+            <div class="risk-description" id="exploitabilityDescription"></div>
+        </div>
+        <div class="form-group">
+            <label for="affectedUsers">Affected Users (1-10):</label>
+            <input type="number" id="affectedUsers" name="affectedUsers" min="1" max="10" required oninput="updateRiskDescription(this)">
+            <div class="risk-description" id="affectedUsersDescription"></div>
+        </div>
+        <div class="form-group">
+            <label for="discoverability">Discoverability (1-10):</label>
+            <input type="number" id="discoverability" name="discoverability" min="1" max="10" required oninput="updateRiskDescription(this)">
+            <div class="risk-description" id="discoverabilityDescription"></div>
+        </div>
+
+        <div class="button-container">
+            <button type="submit">Hitung Skor Risiko</button>
+        </div>
+    </form>
+</div>
+
+<!-- Kontainer Hasil -->
+<div class="results-container">
+    <h3>Hasil Skor Risiko</h3>
+    <table class="results-table" id="resultsTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Aset</th>
+                <th>Jenis Ancaman</th>
+                <th>Deskripsi Ancaman</th>
+                <th>Skor Risiko</th>
+                <th>Keterangan Risiko</th>
+            </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+    </table>
+</div>
+
+<script>
+    function autoFillThreatType() {
+        const threatTypeSelect = document.getElementById('threatType');
+        const description = document.getElementById('threatDescription').value;
+
+        if (description.includes('dimodifikasi')) {
+            threatTypeSelect.value = 'Tampering';
+        } else if (description.includes('kebanjiran')) {
+            threatTypeSelect.value = 'Denial of Service';
+        } else if (description.includes('data pelanggan')) {
+            threatTypeSelect.value = 'Information Disclosure';
+        } else if (description.includes('akses lebih') || description.includes('akses tidak sah')) {
+            threatTypeSelect.value = 'Elevation of Privilege';
+        } else if (description.includes('pura-pura') || description.includes('kesalahan transaksi')) {
+            threatTypeSelect.value = 'Spoofing';
+        } else {
+            threatTypeSelect.value = ''; // Jika tidak ada yang cocok
+        }
+    }
+
+    function calculateDREADScore() {
+        const asset = document.getElementById('asset').value;
+        const threatType = document.getElementById('threatType').value;
+        const threatDescription = document.getElementById('threatDescription').value;
+
+        const damage = parseInt(document.getElementById('damage').value);
+        const reproducibility = parseInt(document.getElementById('reproducibility').value);
+        const exploitability = parseInt(document.getElementById('exploitability').value);
+        const affectedUsers = parseInt(document.getElementById('affectedUsers').value);
+        const discoverability = parseInt(document.getElementById('discoverability').value);
+
+        const dreadScore = damage + reproducibility + exploitability + affectedUsers + discoverability;
+
+        // Tampilkan hasil dalam tabel
+        const resultsTable = document.getElementById('resultsTable');
+        const resultsBody = document.getElementById('resultsBody');
+        resultsBody.innerHTML = `
+            <tr>
+                <td>${asset}</td>
+                <td>${threatType}</td>
+                <td>${threatDescription}</td>
+                <td>${dreadScore}</td>
+                <td>${getRiskDescription(dreadScore)}</td>
+            </tr>
+        `;
+        resultsTable.style.display = 'table';
+
+        return false; // Menghindari refresh halaman
+    }
+
+    function getRiskDescription(score) {
+        if (score <= 10) {
+            return 'Rendah: Ancaman minimal, tetapi perlu diawasi.';
+        } else if (score <= 20) {
+            return 'Sedang: Ancaman memerlukan perhatian, risiko sedang.';
+        } else if (score <= 30) {
+            return 'Tinggi: Ancaman serius yang harus segera ditangani.';
+        } else {
+            return 'Sangat Tinggi: Ancaman sangat serius, tindakan segera diperlukan!';
+        }
+    }
+
+    function updateRiskDescription(input) {
+        const inputId = input.id;
+        const descriptionElement = document.getElementById(`${inputId}Description`);
+        const value = input.value;
+
+        if (value <= 3) {
+            descriptionElement.textContent = 'Risiko rendah: kontrol yang ada cukup.';
+        } else if (value <= 6) {
+            descriptionElement.textContent = 'Risiko sedang: memerlukan evaluasi lebih lanjut.';
+        } else {
+            descriptionElement.textContent = 'Risiko tinggi: perlunya tindakan perbaikan segera.';
+        }
+    }
+</script>
+</body>
+</html>
